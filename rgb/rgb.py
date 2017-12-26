@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 import time
-import itertools
 
 BUTTON_LEFT=18
 BUTTON_RIGHT=23
@@ -49,7 +48,7 @@ try:
 			LED_MAP = LED_MAPS[LED_MAP_INDEX]
 			print("New LED map", LED_MAP)
 			rightIsPressed = False
-			
+
 		GPIO.output(LED_LEFT, LED_MAP[0])
 		GPIO.output(LED_MID, LED_MAP[1])
 		GPIO.output(LED_RIGHT, LED_MAP[2])
