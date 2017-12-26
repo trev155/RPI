@@ -18,13 +18,27 @@ GPIO.setup(LED_LEFT, GPIO.OUT)
 GPIO.setup(LED_MID, GPIO.OUT)
 GPIO.setup(LED_RIGHT, GPIO.OUT)
 
+print("Module is ready - press a button!")
+
 try:
 	while True:
 		left_button = GPIO.input(BUTTON_LEFT)
 		right_button = GPIO.input(BUTTON_RIGHT)
-		if left_button == False or right_button == False:
-			print("Button pressed")
-			GPIO.output(LED_LEFT, 1)
+		if not left_button or not right_button:
+			if not left_button:
+				print("Left button pressed")
+			if not right_button:
+				print("Right button pressed")
+
+			if not left_button and not right_button:
+				GPIO.output(LED_LEFT, 1)
+				GPIO.output(LED_RIGHT, 1)
+			elif not left_button:
+				GPIO.output(LED_LEFT, 1)
+			elif not right_button:
+				GPIO.output(LED_RIGHT, 1)
+			else:
+				pass
 			time.sleep(0.5)
 		else:
 			GPIO.output(LED_LEFT, 0)
