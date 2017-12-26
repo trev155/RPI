@@ -31,10 +31,11 @@ try:
 			if LED_MAP_INDEX == len(LED_MAPS):
 				LED_MAP_INDEX = 0
 			LED_MAP = LED_MAPS[LED_MAP_INDEX]
+			print(LED_MAP)
 		GPIO.output(LED_LEFT, LED_MAP[0])
 		GPIO.output(LED_MID, LED_MAP[1])
 		GPIO.output(LED_RIGHT, LED_MAP[2])
-		time.sleep(0.3)
+		time.sleep(0.1)
 finally:
 	GPIO.cleanup()
 
