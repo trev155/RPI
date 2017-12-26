@@ -25,14 +25,10 @@ try:
 		left_button = GPIO.input(BUTTON_LEFT)
 		right_button = GPIO.input(BUTTON_RIGHT)
 		if not left_button or not right_button:
-			if not left_button:
-				print("Left button pressed")
-			if not right_button:
-				print("Right button pressed")
-
 			if not left_button and not right_button:
 				GPIO.output(LED_LEFT, 1)
 				GPIO.output(LED_RIGHT, 1)
+				GPIO.output(LED_MID, 1)
 			elif not left_button:
 				GPIO.output(LED_LEFT, 1)
 				GPIO.output(LED_MID, 0)
@@ -43,7 +39,7 @@ try:
 				GPIO.output(LED_MID, 0)
 			else:
 				pass
-			time.sleep(0.5)
+			time.sleep(0.2)
 		else:
 			GPIO.output(LED_LEFT, 0)
 			GPIO.output(LED_MID, 0)
