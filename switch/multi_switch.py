@@ -35,8 +35,12 @@ try:
 				GPIO.output(LED_RIGHT, 1)
 			elif not left_button:
 				GPIO.output(LED_LEFT, 1)
+				GPIO.output(LED_MID, 0)
+				GPIO.output(LED_RIGHT, 0)
 			elif not right_button:
 				GPIO.output(LED_RIGHT, 1)
+				GPIO.output(LED_LEFT, 0)
+				GPIO.output(LED_MID, 0)
 			else:
 				pass
 			time.sleep(0.5)
