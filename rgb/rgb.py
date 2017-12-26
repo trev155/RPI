@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import itertools
 
 BUTTON_LEFT=18
 BUTTON_RIGHT=23
@@ -7,7 +8,9 @@ LED_LEFT=16
 LED_MID=20
 LED_RIGHT=21
 
-LED_MAP = [False, False, False]
+LED_MAPS = list(itertools.product((0, 1), repeat=3))
+LED_MAP_INDEX = 0
+LED_MAP = LED_MAPS[LED_MAP_INDEX]
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BUTTON_LEFT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -20,15 +23,18 @@ print("Module is ready - press a button!")
 
 try:
 	while True:
-		# left_button = GPIO.input(BUTTON_LEFT)
 		right_button_pressed = not GPIO.input(BUTTON_RIGHT)
 		if right_button_pressed:
 			print("Button pressed")
 			# Change LED map config
-		else:
-			GPIO.output(LED_LEFT, LED_MAP[0])
-			GPIO.output(LED_MID, LED_MAP[1])
-			GPIO.output(LED_RIGHT, LED_MAP[2])
+			LED_MAP_INDEX = LED_MAP_INDEX + 1
+			if LED_MAP_INDEX == len(LED_MAPS) - 1:
+				LED_MAP_INDEX = 0
+			LED_MAP = LED_MAPS[LED_MAP_INDEX]
+	
+		GPIO.output(LED_LEFT, LED_MAP[0])
+		GPIO.output(LED_MID, LED_MAP[1])
+		GPIO.output(LED_RIGHT, LED_MAP[2])
 		time.sleep(0.2)
 finally:
 	GPIO.cleanup()
