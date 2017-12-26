@@ -3,8 +3,10 @@ import time
 
 """
 A module that has 2 input buttons. 
+When the left button is pressed, the left LEDs turn on.
+When the right button is pressed, the right LEDs turn on.
+When both buttons are pressed, the left, right, and middle LEDs turn on.
 """
-
 BUTTON_LEFT=23
 BUTTON_RIGHT=18
 LED_LEFT=21
