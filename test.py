@@ -13,10 +13,8 @@ try:
 	while True:
 		input_state = not GPIO.input(BUTTON_PIN)
 		if input_state:
-			# print("Button pressed")
 			isPressed = True
 		elif isPressed:
-			isOn = not isOn
 			print("Button pressed")
 			isPressed = False
 		time.sleep(0.2)
