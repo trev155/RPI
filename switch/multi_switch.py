@@ -42,6 +42,8 @@ try:
 			time.sleep(0.5)
 		else:
 			GPIO.output(LED_LEFT, 0)
-			
+			GPIO.output(LED_MID, 0)
+			GPIO.output(LED_RIGHT, 0)
+	
 finally:
 	GPIO.cleanup()
