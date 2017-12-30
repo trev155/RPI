@@ -31,6 +31,7 @@ import RPi.GPIO as GPIO
 import time
 import socket
 from enum import Enum
+from weather import Weather
 
 # Define GPIO to LCD mapping
 LCD_RS = 24
@@ -56,6 +57,9 @@ E_DELAY = 0.00005
 BUTTON_LEFT = 5
 BUTTON_RIGHT = 26
 
+# Weather Constants
+WOEID_GUELPH = 4048
+WOEID_TORONTO = 4118
 
 """
 Initialize GPIO and LCD
@@ -158,7 +162,8 @@ def lcd_string(message, style):
 class LCDOption(Enum):
     DATETIME = 1
     IP = 2
-    FUN = 3
+    WEATHER = 3
+    FUN = 4
 
 """ Information functions """
 def get_ip_address():
@@ -171,6 +176,15 @@ def get_date():
 
 def get_time():
     return time.strftime("%I:%M:%S %Z")
+
+def get_weather_forecast_high_low(forecast):
+    high = farenheit_to_celcius(forecast.high())
+    low = farenheit_to_celcius(forecast.low())
+    return str(high) + " / " + str(low)
+
+def get_weather_forecast_text(forecast):
+    forecast_description = forecast.text()
+    return forecast_description
 
 """ Display setters """
 def set_display(line1, pos1, line2, pos2):
@@ -185,14 +199,28 @@ def display_datetime():
 def display_ip_address():
     set_display("IP Address: ", 1, get_ip_address(), 1)
 
+def display_local_weather():
+    # Look at: https://developer.yahoo.com/weather/
+    # for the structure of a forecast object
+    try:
+        weather = Weather()
+        lookup = weather.lookup(WOEID_GUELPH)
+        forecast = lookup.forecast()
+        today = forecast[0]
+        set_display(get_weather_forecast_high_low(today), 1, get_weather_forecast_text(today), 1)
+    except:
+        set_display("Yahoo Weather", 2, "API unavailable", 2)
+
 def display_fun():
-    set_display("Fun message!", 2, "Hooray!", 2)
+    set_display("Fun message!", 3, "Hooray!", 3)
 
 def displayLCDOption(currentOption):
     if currentOption == LCDOption.DATETIME:
         display_datetime()
     elif currentOption == LCDOption.IP:
         display_ip_address()
+    elif currentOption == LCDOption.WEATHER:
+        display_local_weather()
     elif currentOption == LCDOption.FUN:
         display_fun()
     else:  # default
@@ -204,13 +232,18 @@ def next_lcd_option(currentOption):
     if currentOption == LCDOption.DATETIME:
         next_value = LCDOption.IP
     elif currentOption == LCDOption.IP:
+        next_value = LCDOption.WEATHER
+    elif currentOption == LCDOption.WEATHER:
         next_value = LCDOption.FUN
     elif currentOption == LCDOption.FUN:
         next_value = LCDOption.DATETIME
     else:  # default
         next_value = LCDOption.DATETIME
     return next_value
-        
+    
+def farenheit_to_celcius(farenheit):
+    return round((int(farenheit) - 32) * (5.0 / 9.0))
+
 ########
 # MAIN #
 ########
@@ -233,6 +266,7 @@ if __name__ == '__main__':
                 leftIsPressed = True
             elif leftIsPressed:
                 print("Left button pressed - advance to the next LCD view option")
+                # Advance the LCD option
                 currentOption = next_lcd_option(currentOption)
                 displayLCDOption(currentOption)
                 leftIsPressed = False
@@ -244,6 +278,9 @@ if __name__ == '__main__':
                 rightIsPressed = False
             
             # Sleep a bit so we don't hog CPU
-            time.sleep(0.2)
+            time.sleep(0.1)
+            # Refresh the display for date time (looks better)
+            if currentOption == LCDOption.DATETIME:
+                displayLCDOption(currentOption)
     finally:
         GPIO.cleanup()
