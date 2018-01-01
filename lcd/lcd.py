@@ -164,7 +164,8 @@ class LCDOption(Enum):
     DATETIME = 1
     IP = 2
     WEATHER = 3
-    FUN = 4
+    TEMP = 4
+    FUN = 5
 
 """ Information functions """
 def get_ip_address():
@@ -186,6 +187,11 @@ def get_weather_forecast_high_low(forecast):
 def get_weather_forecast_text(forecast):
     forecast_description = forecast.text()
     return forecast_description
+
+def get_room_temperature():
+    t = temperature_reading(resistance_reading())
+    print(t)
+    return t
 
 """ Display setters """
 def set_display(line1, pos1, line2, pos2):
@@ -212,6 +218,9 @@ def display_local_weather():
     except:
         set_display("Yahoo Weather", 2, "API unavailable", 2)
 
+def display_room_temperature():
+    set_display("Room Temperature:", 2, get_room_temperature(), 2)
+
 def display_fun():
     set_display("Fun message!", 3, "Hooray!", 3)
 
@@ -222,6 +231,8 @@ def displayLCDOption(currentOption):
         display_ip_address()
     elif currentOption == LCDOption.WEATHER:
         display_local_weather()
+    elif currentOption == LCDOption.TEMP:
+        display_room_temperature()
     elif currentOption == LCDOption.FUN:
         display_fun()
     else:  # default
@@ -235,6 +246,8 @@ def next_lcd_option(currentOption):
     elif currentOption == LCDOption.IP:
         next_value = LCDOption.WEATHER
     elif currentOption == LCDOption.WEATHER:
+        next_value = LCDOption.TEMP
+    elif currentOption == LCDOption.TEMP:
         next_value = LCDOption.FUN
     elif currentOption == LCDOption.FUN:
         next_value = LCDOption.DATETIME
@@ -308,10 +321,6 @@ if __name__ == '__main__':
     try:
         lcd_init()
         # This sleep is needed or else the LCD messes up from activating too quickly
-
-        t = temperature_reading(resistance_reading())
-        print(t)
-
         time.sleep(2)
         displayLCDOption(currentOption)
 
