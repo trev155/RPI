@@ -32,6 +32,7 @@ import time
 import socket
 from enum import Enum
 from weather import Weather
+import math
 
 # Define GPIO to LCD mapping
 LCD_RS = 24
