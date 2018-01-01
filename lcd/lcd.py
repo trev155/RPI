@@ -274,8 +274,7 @@ def resistance_reading():
     reading = total / 100
     # Convert our average time reading to a resistance
     resistance = reading * 6.05 - 939
-
-    print("resistance = " + str(-resistance))
+    resistance = -resistance
     return resistance
  
 # Create a function to convert a resistance reading from our
@@ -302,8 +301,8 @@ if __name__ == '__main__':
 
     temp_low = 70 # Lowest temperature for LEDs (F)
     temp_high = 86 # Highest temperature for LEDs (F)
-    a_pin = 23
-    b_pin = 24
+    a_pin = 17
+    b_pin = 27
     adjustment_value = 0.97
 
     try:
