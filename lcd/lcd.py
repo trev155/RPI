@@ -244,6 +244,51 @@ def next_lcd_option(currentOption):
 def farenheit_to_celcius(farenheit):
     return round((int(farenheit) - 32) * (5.0 / 9.0))
 
+# Create a function to take an analog reading of the
+# time taken to charge a capacitor after first discharging it
+# Perform the procedure 100 times and take an average
+# in order to minimize errors and then convert this
+# reading to a resistance
+def resistance_reading():
+    total = 0
+    for i in range(1, 100):
+        # Discharge the 330nf capacitor
+        GPIO.setup(a_pin, GPIO.IN)
+        GPIO.setup(b_pin, GPIO.OUT)
+        GPIO.output(b_pin, False)
+        time.sleep(0.01)
+        # Charge the capacitor until our GPIO pin
+        # reads HIGH or approximately 1.65 volts
+        GPIO.setup(b_pin, GPIO.IN)
+        GPIO.setup(a_pin, GPIO.OUT)
+        GPIO.output(a_pin, True)
+        t1 = time.time()
+        while not GPIO.input(b_pin):
+            pass
+        t2 = time.time()
+        # Record the time taken and add to our total for
+        # an eventual average calculation
+        total = total + (t2 - t1) * 1000000
+    # Average our time readings
+    reading = total / 100
+    # Convert our average time reading to a resistance
+    resistance = reading * 6.05 - 939
+    return resistance
+ 
+# Create a function to convert a resistance reading from our
+# thermistor to a temperature in Celsius which we convert to
+# Fahrenheit and return to our main loop
+def temperature_reading(R):
+    B = 3977.0 # Thermistor constant from thermistor datasheet
+    R0 = 10000.0 # Resistance of the thermistor being used
+    t0 = 273.15 # 0 deg C in K
+    t25 = t0 + 25.0 # 25 deg C in K
+    # Steinhart-Hart equation
+    inv_T = 1/t25 + 1/B * math.log(R/R0)
+    T = (1/inv_T - t0) * adjustment_value
+    return T * 9.0 / 5.0 + 32.0 # Convert C to F
+
+
 ########
 # MAIN #
 ########
@@ -251,9 +296,20 @@ if __name__ == '__main__':
     leftIsPressed = False
     rightIsPressed = False
     currentOption = LCDOption.DATETIME
+
+    temp_low = 70 # Lowest temperature for LEDs (F)
+    temp_high = 86 # Highest temperature for LEDs (F)
+    a_pin = 23
+    b_pin = 24
+    adjustment_value = 0.97
+
     try:
         lcd_init()
         # This sleep is needed or else the LCD messes up from activating too quickly
+
+        t = temperature_reading(resistance_reading())
+        print(t)
+
         time.sleep(2)
         displayLCDOption(currentOption)
 
