@@ -191,7 +191,7 @@ def get_weather_forecast_text(forecast):
 def get_room_temperature():
     t = temperature_reading(resistance_reading())
     print(t)
-    return t
+    return str(t)
 
 """ Display setters """
 def set_display(line1, pos1, line2, pos2):
@@ -313,8 +313,8 @@ if __name__ == '__main__':
 
     temp_low = 70 # Lowest temperature for LEDs (F)
     temp_high = 86 # Highest temperature for LEDs (F)
-    a_pin = 17
-    b_pin = 27
+    a_pin = 27
+    b_pin = 17
     adjustment_value = 0.97
 
     try:
