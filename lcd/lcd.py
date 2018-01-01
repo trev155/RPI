@@ -275,7 +275,7 @@ def resistance_reading():
     # Convert our average time reading to a resistance
     resistance = reading * 6.05 - 939
 
-    print("resistance = " + str(resistance))
+    print("resistance = " + str(-resistance))
     return resistance
  
 # Create a function to convert a resistance reading from our
